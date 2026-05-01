@@ -1,6 +1,67 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+// Sound System (Synthesized)
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+const Sound = {
+    playShoot() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(200, audioCtx.currentTime + 0.1);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.1);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.1);
+    },
+    playExplosion() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.3);
+    },
+    playHit() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.2);
+        gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.2);
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 0.2);
+    },
+    playLevelUp() {
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        [523.25, 659.25, 783.99].forEach((f, i) => {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.frequency.setValueAtTime(f, audioCtx.currentTime + i * 0.1);
+            gain.gain.setValueAtTime(0.07, audioCtx.currentTime + i * 0.1);
+            gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + i * 0.1 + 0.2);
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.start(audioCtx.currentTime + i * 0.1);
+            osc.stop(audioCtx.currentTime + i * 0.1 + 0.2);
+        });
+    }
+};
+
 const scoreEl = document.getElementById('scoreEl');
 const levelEl = document.getElementById('levelEl');
 const timeEl = document.getElementById('timeEl');
@@ -84,6 +145,7 @@ function checkOrientation() {
 }
 
 btnDesktop.addEventListener('click', () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     isTouchDevice = false;
     deviceSelectionScreen.style.display = 'none';
     deviceSelectionScreen.classList.add('hidden');
@@ -94,6 +156,7 @@ btnDesktop.addEventListener('click', () => {
 });
 
 btnMobile.addEventListener('click', () => {
+    if (audioCtx.state === 'suspended') audioCtx.resume();
     isTouchDevice = true;
     deviceSelectionScreen.style.display = 'none';
     deviceSelectionScreen.classList.add('hidden');
@@ -126,8 +189,8 @@ btnMobile.addEventListener('click', () => {
 
     moveJoystickManager.on('move', (evt, data) => {
         const rawForce = Math.min(data.force, 1);
-        // Set multiplier to 0.1 as per user request, keeping cubic curve for smoothness
-        const force = Math.pow(rawForce, 3) * 0.1;
+        // Multiplier set to 0.3 as requested
+        const force = Math.pow(rawForce, 3) * 0.3;
         joystickMoveVector.x = Math.cos(data.angle.radian) * force;
         joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
     });
@@ -203,6 +266,7 @@ class Player {
         };
         projectiles.push(new Projectile(this.x, this.y, 4, colors.bullet, velocity));
         this.lastShot = frameCount;
+        Sound.playShoot();
 
         // Recoil
         this.velocity.x -= Math.cos(angle) * 2;
@@ -442,6 +506,7 @@ function levelUp() {
     level++;
     levelEl.innerHTML = level;
     timeRemaining = 30; // reset timer for next level
+    Sound.playLevelUp();
 
     // Create level up visual effect
     if (player) {
@@ -553,6 +618,7 @@ function animate() {
                 // Enemy crashes into player
                 createExplosion(enemy.x, enemy.y, enemy.color);
                 enemies.splice(i, 1);
+                Sound.playHit();
 
                 // Shrink player (More punishing)
                 player.radius -= 8;
@@ -587,6 +653,7 @@ function animate() {
             if (dist - enemy.radius - projectile.radius < 1) {
                 // Create explosion
                 createExplosion(enemy.x, enemy.y, enemy.color);
+                Sound.playExplosion();
 
                 // Score popup particle effect
                 score += 10;
