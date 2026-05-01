@@ -102,12 +102,12 @@ btnMobile.addEventListener('click', () => {
     topBar.style.display = 'flex';
     topBar.classList.remove('hidden');
     checkOrientation();
-    
+
     joystickMoveZone.style.display = 'block';
     joystickMoveZone.classList.remove('hidden');
     joystickShootZone.style.display = 'block';
     joystickShootZone.classList.remove('hidden');
-    
+
     moveJoystickManager = nipplejs.create({
         zone: joystickMoveZone,
         mode: 'static',
@@ -115,7 +115,7 @@ btnMobile.addEventListener('click', () => {
         color: '#00f3ff',
         size: 120
     });
-    
+
     shootJoystickManager = nipplejs.create({
         zone: joystickShootZone,
         mode: 'static',
@@ -123,15 +123,15 @@ btnMobile.addEventListener('click', () => {
         color: '#ff00ea',
         size: 120
     });
-    
+
     moveJoystickManager.on('move', (evt, data) => {
         const rawForce = Math.min(data.force, 1);
         // Massively reduce max force multiplier to 0.3 for slower, precise movement
-        const force = Math.pow(rawForce, 2) * 0.3;
+        const force = Math.pow(rawForce, 2) * 0.1;
         joystickMoveVector.x = Math.cos(data.angle.radian) * force;
         joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
     });
-    
+
     moveJoystickManager.on('end', () => {
         joystickMoveVector = { x: 0, y: 0 };
     });
@@ -140,7 +140,7 @@ btnMobile.addEventListener('click', () => {
         joystickShootData.active = true;
         joystickShootData.angle = -data.angle.radian;
     });
-    
+
     shootJoystickManager.on('end', () => {
         joystickShootData.active = false;
     });
@@ -182,7 +182,7 @@ class Player {
         ctx.shadowColor = this.color;
         ctx.fill();
         ctx.closePath();
-        
+
         // Draw aim indicator
         const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
         ctx.beginPath();
@@ -192,7 +192,7 @@ class Player {
         ctx.lineWidth = 3;
         ctx.stroke();
         ctx.closePath();
-        
+
         ctx.restore();
     }
 
@@ -203,7 +203,7 @@ class Player {
         };
         projectiles.push(new Projectile(this.x, this.y, 4, colors.bullet, velocity));
         this.lastShot = frameCount;
-        
+
         // Recoil
         this.velocity.x -= Math.cos(angle) * 2;
         this.velocity.y -= Math.sin(angle) * 2;
@@ -261,10 +261,10 @@ class Player {
 
         // Draw trail effect
         if (Math.abs(this.velocity.x) > 0.5 || Math.abs(this.velocity.y) > 0.5) {
-             particles.push(new Particle(this.x, this.y, Math.random() * 3, colors.playerTrail, {
-                 x: -this.velocity.x * 0.5 + (Math.random() - 0.5),
-                 y: -this.velocity.y * 0.5 + (Math.random() - 0.5)
-             }, 0.05));
+            particles.push(new Particle(this.x, this.y, Math.random() * 3, colors.playerTrail, {
+                x: -this.velocity.x * 0.5 + (Math.random() - 0.5),
+                y: -this.velocity.y * 0.5 + (Math.random() - 0.5)
+            }, 0.05));
         }
 
         this.draw();
@@ -315,13 +315,13 @@ class Enemy {
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.angle);
-        
+
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 3;
         ctx.shadowBlur = 15;
         ctx.shadowColor = this.color;
-        
+
         if (this.shape === 0) {
             ctx.arc(0, 0, this.radius, 0, Math.PI * 2, false);
         } else if (this.shape === 1) {
@@ -332,13 +332,13 @@ class Enemy {
             ctx.lineTo(-this.radius, this.radius);
             ctx.closePath();
         }
-        
+
         ctx.stroke();
-        
+
         // Fill subtly
         ctx.fillStyle = 'rgba(0,0,0,0.5)';
         ctx.fill();
-        
+
         ctx.restore();
     }
 
@@ -346,19 +346,19 @@ class Enemy {
         this.x += this.velocity.x;
         this.y += this.velocity.y;
         this.angle += this.rotationSpeed;
-        
+
         // Track player slowly
         if (player) {
             const angle = Math.atan2(player.y - this.y, player.x - this.x);
             this.velocity.x += Math.cos(angle) * 0.05;
             this.velocity.y += Math.sin(angle) * 0.05;
-            
+
             // Random spontaneous movement
             if (Math.random() < 0.02 + (level * 0.005)) {
                 this.velocity.x += (Math.random() - 0.5) * level * 2;
                 this.velocity.y += (Math.random() - 0.5) * level * 2;
             }
-            
+
             // Limit speed
             const speed = Math.hypot(this.velocity.x, this.velocity.y);
             const maxSpeed = 4 + (level * 1.2); // Enemies get faster as level increases
@@ -367,7 +367,7 @@ class Enemy {
                 this.velocity.y = (this.velocity.y / speed) * maxSpeed;
             }
         }
-        
+
         this.draw();
     }
 }
@@ -442,26 +442,26 @@ function levelUp() {
     level++;
     levelEl.innerHTML = level;
     timeRemaining = 30; // reset timer for next level
-    
+
     // Create level up visual effect
     if (player) {
         createExplosion(player.x, player.y, '#00ff66', 30);
     }
-    
+
     const badges = {
         3: '🥉 BRONZE DEFENDER',
         5: '🥈 SILVER DEFENDER',
         10: '🥇 GOLDEN DEFENDER',
         15: '💎 DIAMOND DEFENDER'
     };
-    
+
     if (badges[level]) {
         hasBadge = true;
         badgeContainer.innerHTML = badges[level];
         badgeContainer.classList.remove('hidden');
         finalBadgeContainer.innerHTML = badges[level] + " EARNED!";
         // create particle celebration
-        createExplosion(canvas.width/2, canvas.height/2, '#ffd700', 100);
+        createExplosion(canvas.width / 2, canvas.height / 2, '#ffd700', 100);
     }
 }
 
@@ -486,7 +486,7 @@ function spawnEnemies() {
         };
 
         enemies.push(new Enemy(x, y, radius, color, velocity));
-        
+
         // Increase difficulty based on level (Drops faster now)
         enemySpawnRate = Math.max(8, 100 - (level * 25));
     }
@@ -509,16 +509,16 @@ function createExplosion(x, y, color, count = 20) {
 function animate() {
     animationId = requestAnimationFrame(animate);
     frameCount++;
-    
+
     // Clear canvas with a slight trail effect
     ctx.fillStyle = 'rgba(5, 5, 5, 0.3)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
+
     if (gameActive) {
         player.update();
         spawnEnemies();
     }
-    
+
     // Update Particles
     for (let i = particles.length - 1; i >= 0; i--) {
         const p = particles[i];
@@ -535,7 +535,7 @@ function animate() {
         p.update();
 
         // Remove off-screen projectiles
-        if (p.x + p.radius < 0 || p.x - p.radius > canvas.width || 
+        if (p.x + p.radius < 0 || p.x - p.radius > canvas.width ||
             p.y + p.radius < 0 || p.y - p.radius > canvas.height) {
             projectiles.splice(i, 1);
         }
@@ -553,7 +553,7 @@ function animate() {
                 // Enemy crashes into player
                 createExplosion(enemy.x, enemy.y, enemy.color);
                 enemies.splice(i, 1);
-                
+
                 // Shrink player (More punishing)
                 player.radius -= 8;
                 createExplosion(player.x, player.y, colors.player, 30);
@@ -587,7 +587,7 @@ function animate() {
             if (dist - enemy.radius - projectile.radius < 1) {
                 // Create explosion
                 createExplosion(enemy.x, enemy.y, enemy.color);
-                
+
                 // Score popup particle effect
                 score += 10;
                 scoreEl.innerHTML = score;
