@@ -292,3 +292,59 @@ kbd {
     height: 150px;
     z-index: 50;
 }
+
+/* Mobile Responsiveness */
+@media screen and (max-width: 900px), screen and (max-height: 500px) {
+    .glass-panel {
+        padding: 15px 25px;
+        width: 90%;
+        max-width: 500px;
+        max-height: 95vh;
+        overflow-y: auto;
+    }
+    
+    .neon-text {
+        font-size: 26px;
+        margin-bottom: 5px;
+    }
+    
+    p {
+        font-size: 14px;
+        margin-bottom: 10px;
+    }
+    
+    .rules-box, .controls-info {
+        padding: 10px;
+        margin-bottom: 10px;
+    }
+    
+    .rules-box h3 {
+        font-size: 16px;
+        margin-bottom: 5px;
+    }
+    
+    .rules-box li, .controls-info p {
+        font-size: 13px;
+        margin-bottom: 4px;
+    }
+    
+    .neon-btn {
+        padding: 10px 20px;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+    
+    #top-bar {
+        top: 10px;
+        left: 15px;
+        right: 15px;
+        font-size: 14px;
+    }
+
+    #joystick-zone {
+        bottom: 20px;
+        left: 20px;
+        width: 100px;
+        height: 100px;
+    }
+}
