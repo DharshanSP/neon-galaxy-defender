@@ -106,11 +106,14 @@ btnMobile.addEventListener('click', () => {
         zone: joystickZone,
         mode: 'static',
         position: { left: '50%', top: '50%' },
-        color: '#00f3ff'
+        color: '#00f3ff',
+        size: 120
     });
     
     joystickManager.on('move', (evt, data) => {
-        const force = Math.min(data.force, 1);
+        // Curve the force and reduce max sensitivity for better control
+        const rawForce = Math.min(data.force, 1);
+        const force = Math.pow(rawForce, 1.5) * 0.5; // Exponential curve + reduced speed
         joystickVector.x = Math.cos(data.angle.radian) * force;
         joystickVector.y = -Math.sin(data.angle.radian) * force;
     });
