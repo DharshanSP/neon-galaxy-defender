@@ -126,8 +126,8 @@ btnMobile.addEventListener('click', () => {
 
     moveJoystickManager.on('move', (evt, data) => {
         const rawForce = Math.min(data.force, 1);
-        // Aggressively reduced for ultra-casual control: 0.04 multiplier + Cubic curve
-        const force = Math.pow(rawForce, 3) * 0.04;
+        // Set multiplier to 0.1 as per user request, keeping cubic curve for smoothness
+        const force = Math.pow(rawForce, 3) * 0.1;
         joystickMoveVector.x = Math.cos(data.angle.radian) * force;
         joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
     });
