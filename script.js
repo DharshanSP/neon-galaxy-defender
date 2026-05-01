@@ -59,6 +59,22 @@ window.addEventListener('mousemove', (e) => {
 window.addEventListener('mousedown', () => mouse.isDown = true);
 window.addEventListener('mouseup', () => mouse.isDown = false);
 
+let isTouchDevice = false;
+
+window.addEventListener('touchstart', (e) => {
+    isTouchDevice = true;
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+    mouse.isDown = true;
+}, {passive: false});
+
+window.addEventListener('touchmove', (e) => {
+    mouse.x = e.touches[0].clientX;
+    mouse.y = e.touches[0].clientY;
+}, {passive: false});
+
+window.addEventListener('touchend', () => mouse.isDown = false);
+
 // Utility functions
 const randomRange = (min, max) => Math.random() * (max - min) + min;
 const distance = (x1, y1, x2, y2) => Math.hypot(x2 - x1, y2 - y1);
@@ -109,6 +125,19 @@ class Player {
         ctx.restore();
     }
 
+    shoot(angle) {
+        const velocity = {
+            x: Math.cos(angle) * 15,
+            y: Math.sin(angle) * 15
+        };
+        projectiles.push(new Projectile(this.x, this.y, 4, colors.bullet, velocity));
+        this.lastShot = frameCount;
+        
+        // Recoil
+        this.velocity.x -= Math.cos(angle) * 2;
+        this.velocity.y -= Math.sin(angle) * 2;
+    }
+
     update() {
         // Movement logic
         let dx = 0;
@@ -118,6 +147,15 @@ class Player {
         if (keys.s || keys.ArrowDown) dy += 1;
         if (keys.a || keys.ArrowLeft) dx -= 1;
         if (keys.d || keys.ArrowRight) dx += 1;
+
+        if (isTouchDevice && mouse.isDown) {
+            const angleToTouch = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+            const distToTouch = distance(this.x, this.y, mouse.x, mouse.y);
+            if (distToTouch > 15) {
+                dx += Math.cos(angleToTouch);
+                dy += Math.sin(angleToTouch);
+            }
+        }
 
         // Normalize diagonal movement
         if (dx !== 0 && dy !== 0) {
@@ -143,18 +181,22 @@ class Player {
         if (this.y + this.radius > canvas.height) this.y = canvas.height - this.radius;
 
         // Shooting logic
-        if (mouse.isDown && frameCount - this.lastShot > this.fireRate) {
-            const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
-            const velocity = {
-                x: Math.cos(angle) * 15,
-                y: Math.sin(angle) * 15
-            };
-            projectiles.push(new Projectile(this.x, this.y, 4, colors.bullet, velocity));
-            this.lastShot = frameCount;
-            
-            // Recoil
-            this.velocity.x -= Math.cos(angle) * 2;
-            this.velocity.y -= Math.sin(angle) * 2;
+        if (frameCount - this.lastShot > this.fireRate) {
+            if (!isTouchDevice && mouse.isDown) {
+                const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
+                this.shoot(angle);
+            } else if (isTouchDevice && enemies.length > 0) {
+                let nearest = null;
+                let minDist = Infinity;
+                for (let e of enemies) {
+                    let d = distance(this.x, this.y, e.x, e.y);
+                    if (d < minDist) { minDist = d; nearest = e; }
+                }
+                if (nearest) {
+                    const angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
+                    this.shoot(angle);
+                }
+            }
         }
 
         // Draw trail effect
@@ -250,6 +292,12 @@ class Enemy {
             const angle = Math.atan2(player.y - this.y, player.x - this.x);
             this.velocity.x += Math.cos(angle) * 0.05;
             this.velocity.y += Math.sin(angle) * 0.05;
+            
+            // Random spontaneous movement
+            if (Math.random() < 0.02 + (level * 0.005)) {
+                this.velocity.x += (Math.random() - 0.5) * level * 2;
+                this.velocity.y += (Math.random() - 0.5) * level * 2;
+            }
             
             // Limit speed
             const speed = Math.hypot(this.velocity.x, this.velocity.y);
@@ -370,8 +418,8 @@ function spawnEnemies() {
 
         enemies.push(new Enemy(x, y, radius, color, velocity));
         
-        // Increase difficulty based on level
-        enemySpawnRate = Math.max(20, 100 - (level * 15));
+        // Increase difficulty based on level (Drops faster now)
+        enemySpawnRate = Math.max(10, 100 - (level * 20));
     }
 }
 
