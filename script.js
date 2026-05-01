@@ -83,18 +83,25 @@ function checkOrientation() {
 btnDesktop.addEventListener('click', () => {
     isTouchDevice = false;
     deviceSelectionScreen.style.display = 'none';
+    deviceSelectionScreen.classList.add('hidden');
     startScreen.style.display = 'block';
+    startScreen.classList.remove('hidden');
     topBar.style.display = 'flex';
+    topBar.classList.remove('hidden');
 });
 
 btnMobile.addEventListener('click', () => {
     isTouchDevice = true;
     deviceSelectionScreen.style.display = 'none';
+    deviceSelectionScreen.classList.add('hidden');
     startScreen.style.display = 'block';
+    startScreen.classList.remove('hidden');
     topBar.style.display = 'flex';
+    topBar.classList.remove('hidden');
     checkOrientation();
     
     joystickZone.style.display = 'block';
+    joystickZone.classList.remove('hidden');
     joystickManager = nipplejs.create({
         zone: joystickZone,
         mode: 'static',
