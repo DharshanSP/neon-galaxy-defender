@@ -164,8 +164,9 @@ class Player {
             dy /= length;
         }
 
-        this.velocity.x += dx * 1.5;
-        this.velocity.y += dy * 1.5;
+        const acceleration = 1.5 + (level * 0.3); // Speed increases with level
+        this.velocity.x += dx * acceleration;
+        this.velocity.y += dy * acceleration;
 
         // Apply friction
         this.velocity.x *= this.friction;
