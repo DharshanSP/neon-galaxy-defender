@@ -284,13 +284,20 @@ kbd {
     }
 }
 
-#joystick-zone {
+.joystick {
     position: absolute;
     bottom: 40px;
-    left: 40px;
     width: 150px;
     height: 150px;
     z-index: 50;
+}
+
+#joystick-move {
+    left: 40px;
+}
+
+#joystick-shoot {
+    right: 40px;
 }
 
 /* Mobile Responsiveness */
@@ -341,10 +348,15 @@ kbd {
         font-size: 14px;
     }
 
-    #joystick-zone {
+    .joystick {
         bottom: 20px;
-        left: 20px;
         width: 100px;
         height: 100px;
+    }
+    #joystick-move {
+        left: 20px;
+    }
+    #joystick-shoot {
+        right: 20px;
     }
 }

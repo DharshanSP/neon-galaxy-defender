@@ -17,7 +17,8 @@ const btnDesktop = document.getElementById('btn-desktop');
 const btnMobile = document.getElementById('btn-mobile');
 const topBar = document.getElementById('top-bar');
 const orientationWarning = document.getElementById('orientation-warning');
-const joystickZone = document.getElementById('joystick-zone');
+const joystickMoveZone = document.getElementById('joystick-move');
+const joystickShootZone = document.getElementById('joystick-shoot');
 
 let level = 1;
 let timeRemaining = 30;
@@ -67,8 +68,10 @@ window.addEventListener('mousedown', () => mouse.isDown = true);
 window.addEventListener('mouseup', () => mouse.isDown = false);
 
 let isTouchDevice = false;
-let joystickManager = null;
-let joystickVector = { x: 0, y: 0 };
+let moveJoystickManager = null;
+let shootJoystickManager = null;
+let joystickMoveVector = { x: 0, y: 0 };
+let joystickShootData = { active: false, angle: 0 };
 
 function checkOrientation() {
     if (isTouchDevice) {
@@ -100,26 +103,45 @@ btnMobile.addEventListener('click', () => {
     topBar.classList.remove('hidden');
     checkOrientation();
     
-    joystickZone.style.display = 'block';
-    joystickZone.classList.remove('hidden');
-    joystickManager = nipplejs.create({
-        zone: joystickZone,
+    joystickMoveZone.style.display = 'block';
+    joystickMoveZone.classList.remove('hidden');
+    joystickShootZone.style.display = 'block';
+    joystickShootZone.classList.remove('hidden');
+    
+    moveJoystickManager = nipplejs.create({
+        zone: joystickMoveZone,
         mode: 'static',
         position: { left: '50%', top: '50%' },
         color: '#00f3ff',
         size: 120
     });
     
-    joystickManager.on('move', (evt, data) => {
-        // Curve the force and reduce max sensitivity for better control
-        const rawForce = Math.min(data.force, 1);
-        const force = Math.pow(rawForce, 1.5) * 0.5; // Exponential curve + reduced speed
-        joystickVector.x = Math.cos(data.angle.radian) * force;
-        joystickVector.y = -Math.sin(data.angle.radian) * force;
+    shootJoystickManager = nipplejs.create({
+        zone: joystickShootZone,
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: '#ff00ea',
+        size: 120
     });
     
-    joystickManager.on('end', () => {
-        joystickVector = { x: 0, y: 0 };
+    moveJoystickManager.on('move', (evt, data) => {
+        const rawForce = Math.min(data.force, 1);
+        const force = Math.pow(rawForce, 1.5) * 0.5;
+        joystickMoveVector.x = Math.cos(data.angle.radian) * force;
+        joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
+    });
+    
+    moveJoystickManager.on('end', () => {
+        joystickMoveVector = { x: 0, y: 0 };
+    });
+
+    shootJoystickManager.on('move', (evt, data) => {
+        joystickShootData.active = true;
+        joystickShootData.angle = -data.angle.radian;
+    });
+    
+    shootJoystickManager.on('end', () => {
+        joystickShootData.active = false;
     });
 });
 
@@ -197,8 +219,8 @@ class Player {
         if (keys.d || keys.ArrowRight) dx += 1;
 
         if (isTouchDevice) {
-            dx += joystickVector.x;
-            dy += joystickVector.y;
+            dx += joystickMoveVector.x;
+            dy += joystickMoveVector.y;
         }
 
         // Normalize diagonal movement
@@ -230,17 +252,8 @@ class Player {
             if (!isTouchDevice && mouse.isDown) {
                 const angle = Math.atan2(mouse.y - this.y, mouse.x - this.x);
                 this.shoot(angle);
-            } else if (isTouchDevice && enemies.length > 0) {
-                let nearest = null;
-                let minDist = Infinity;
-                for (let e of enemies) {
-                    let d = distance(this.x, this.y, e.x, e.y);
-                    if (d < minDist) { minDist = d; nearest = e; }
-                }
-                if (nearest) {
-                    const angle = Math.atan2(nearest.y - this.y, nearest.x - this.x);
-                    this.shoot(angle);
-                }
+            } else if (isTouchDevice && joystickShootData.active) {
+                this.shoot(joystickShootData.angle);
             }
         }
 
@@ -346,7 +359,7 @@ class Enemy {
             
             // Limit speed
             const speed = Math.hypot(this.velocity.x, this.velocity.y);
-            const maxSpeed = 3 + (level * 0.8); // Enemies get faster as level increases
+            const maxSpeed = 4 + (level * 1.2); // Enemies get faster as level increases
             if (speed > maxSpeed) {
                 this.velocity.x = (this.velocity.x / speed) * maxSpeed;
                 this.velocity.y = (this.velocity.y / speed) * maxSpeed;
@@ -473,7 +486,7 @@ function spawnEnemies() {
         enemies.push(new Enemy(x, y, radius, color, velocity));
         
         // Increase difficulty based on level (Drops faster now)
-        enemySpawnRate = Math.max(10, 100 - (level * 20));
+        enemySpawnRate = Math.max(8, 100 - (level * 25));
     }
 }
 
@@ -539,11 +552,11 @@ function animate() {
                 createExplosion(enemy.x, enemy.y, enemy.color);
                 enemies.splice(i, 1);
                 
-                // Shrink player
-                player.radius -= 5;
-                createExplosion(player.x, player.y, colors.player, 20);
+                // Shrink player (More punishing)
+                player.radius -= 8;
+                createExplosion(player.x, player.y, colors.player, 30);
 
-                if (player.radius < 5) {
+                if (player.radius <= 7) {
                     // Game Over
                     gameActive = false;
                     if (timerInterval) clearInterval(timerInterval);
