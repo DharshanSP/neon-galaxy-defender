@@ -126,7 +126,7 @@ btnMobile.addEventListener('click', () => {
     
     moveJoystickManager.on('move', (evt, data) => {
         const rawForce = Math.min(data.force, 1);
-        const force = Math.pow(rawForce, 1.5) * 0.5;
+        const force = Math.pow(rawForce, 2) * 0.8;
         joystickMoveVector.x = Math.cos(data.angle.radian) * force;
         joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
     });
@@ -213,21 +213,22 @@ class Player {
         let dx = 0;
         let dy = 0;
 
-        if (keys.w || keys.ArrowUp) dy -= 1;
-        if (keys.s || keys.ArrowDown) dy += 1;
-        if (keys.a || keys.ArrowLeft) dx -= 1;
-        if (keys.d || keys.ArrowRight) dx += 1;
-
         if (isTouchDevice) {
-            dx += joystickMoveVector.x;
-            dy += joystickMoveVector.y;
-        }
+            // Use raw joystick vector. Do not normalize, so sensitivity curve works.
+            dx = joystickMoveVector.x;
+            dy = joystickMoveVector.y;
+        } else {
+            if (keys.w || keys.ArrowUp) dy -= 1;
+            if (keys.s || keys.ArrowDown) dy += 1;
+            if (keys.a || keys.ArrowLeft) dx -= 1;
+            if (keys.d || keys.ArrowRight) dx += 1;
 
-        // Normalize diagonal movement
-        if (dx !== 0 && dy !== 0) {
-            const length = Math.sqrt(dx * dx + dy * dy);
-            dx /= length;
-            dy /= length;
+            // Normalize diagonal movement for keyboard
+            if (dx !== 0 && dy !== 0) {
+                const length = Math.sqrt(dx * dx + dy * dy);
+                dx /= length;
+                dy /= length;
+            }
         }
 
         const acceleration = 1.5 + (level * 0.3); // Speed increases with level
