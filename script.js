@@ -126,7 +126,8 @@ btnMobile.addEventListener('click', () => {
     
     moveJoystickManager.on('move', (evt, data) => {
         const rawForce = Math.min(data.force, 1);
-        const force = Math.pow(rawForce, 2) * 0.8;
+        // Massively reduce max force multiplier to 0.3 for slower, precise movement
+        const force = Math.pow(rawForce, 2) * 0.3;
         joystickMoveVector.x = Math.cos(data.angle.radian) * force;
         joystickMoveVector.y = -Math.sin(data.angle.radian) * force;
     });
