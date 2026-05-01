@@ -12,6 +12,12 @@ const gameOverScreen = document.getElementById('game-over-screen');
 const finalScoreEl = document.getElementById('finalScoreEl');
 const finalLevelEl = document.getElementById('finalLevelEl');
 const finalBadgeContainer = document.getElementById('finalBadgeContainer');
+const deviceSelectionScreen = document.getElementById('device-selection-screen');
+const btnDesktop = document.getElementById('btn-desktop');
+const btnMobile = document.getElementById('btn-mobile');
+const topBar = document.getElementById('top-bar');
+const orientationWarning = document.getElementById('orientation-warning');
+const joystickZone = document.getElementById('joystick-zone');
 
 let level = 1;
 let timeRemaining = 30;
@@ -26,6 +32,7 @@ canvas.height = window.innerHeight;
 window.addEventListener('resize', () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
+    if (typeof checkOrientation === 'function') checkOrientation();
 });
 
 // Game State
@@ -60,20 +67,51 @@ window.addEventListener('mousedown', () => mouse.isDown = true);
 window.addEventListener('mouseup', () => mouse.isDown = false);
 
 let isTouchDevice = false;
+let joystickManager = null;
+let joystickVector = { x: 0, y: 0 };
 
-window.addEventListener('touchstart', (e) => {
+function checkOrientation() {
+    if (isTouchDevice) {
+        if (window.innerHeight > window.innerWidth) {
+            orientationWarning.style.display = 'flex';
+        } else {
+            orientationWarning.style.display = 'none';
+        }
+    }
+}
+
+btnDesktop.addEventListener('click', () => {
+    isTouchDevice = false;
+    deviceSelectionScreen.style.display = 'none';
+    startScreen.style.display = 'block';
+    topBar.style.display = 'flex';
+});
+
+btnMobile.addEventListener('click', () => {
     isTouchDevice = true;
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-    mouse.isDown = true;
-}, {passive: false});
-
-window.addEventListener('touchmove', (e) => {
-    mouse.x = e.touches[0].clientX;
-    mouse.y = e.touches[0].clientY;
-}, {passive: false});
-
-window.addEventListener('touchend', () => mouse.isDown = false);
+    deviceSelectionScreen.style.display = 'none';
+    startScreen.style.display = 'block';
+    topBar.style.display = 'flex';
+    checkOrientation();
+    
+    joystickZone.style.display = 'block';
+    joystickManager = nipplejs.create({
+        zone: joystickZone,
+        mode: 'static',
+        position: { left: '50%', top: '50%' },
+        color: '#00f3ff'
+    });
+    
+    joystickManager.on('move', (evt, data) => {
+        const force = Math.min(data.force, 1);
+        joystickVector.x = Math.cos(data.angle.radian) * force;
+        joystickVector.y = -Math.sin(data.angle.radian) * force;
+    });
+    
+    joystickManager.on('end', () => {
+        joystickVector = { x: 0, y: 0 };
+    });
+});
 
 // Utility functions
 const randomRange = (min, max) => Math.random() * (max - min) + min;
@@ -148,13 +186,9 @@ class Player {
         if (keys.a || keys.ArrowLeft) dx -= 1;
         if (keys.d || keys.ArrowRight) dx += 1;
 
-        if (isTouchDevice && mouse.isDown) {
-            const angleToTouch = Math.atan2(mouse.y - this.y, mouse.x - this.x);
-            const distToTouch = distance(this.x, this.y, mouse.x, mouse.y);
-            if (distToTouch > 15) {
-                dx += Math.cos(angleToTouch);
-                dy += Math.sin(angleToTouch);
-            }
+        if (isTouchDevice) {
+            dx += joystickVector.x;
+            dy += joystickVector.y;
         }
 
         // Normalize diagonal movement
@@ -389,9 +423,18 @@ function levelUp() {
         createExplosion(player.x, player.y, '#00ff66', 30);
     }
     
-    if (level === 5 && !hasBadge) {
+    const badges = {
+        3: '🥉 BRONZE DEFENDER',
+        5: '🥈 SILVER DEFENDER',
+        10: '🥇 GOLDEN DEFENDER',
+        15: '💎 DIAMOND DEFENDER'
+    };
+    
+    if (badges[level]) {
         hasBadge = true;
+        badgeContainer.innerHTML = badges[level];
         badgeContainer.classList.remove('hidden');
+        finalBadgeContainer.innerHTML = badges[level] + " EARNED!";
         // create particle celebration
         createExplosion(canvas.width/2, canvas.height/2, '#ffd700', 100);
     }

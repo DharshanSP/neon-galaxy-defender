@@ -38,7 +38,7 @@ canvas {
     background-image: 
         linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
         linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
-    background-size: 50px 50px;
+    background-size: 150px 150px;
     background-position: center center;
 }
 
@@ -257,4 +257,38 @@ kbd {
 @keyframes pulsate-error {
     0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--danger-color), 0 0 40px var(--danger-color); }
     100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--danger-color), 0 0 40px var(--danger-color), 0 0 60px var(--danger-color); }
+}
+
+#orientation-warning {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(5, 5, 5, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-align: center;
+    color: var(--danger-color);
+    font-family: 'Orbitron', sans-serif;
+    display: none;
+}
+
+#orientation-warning .glass-panel {
+    pointer-events: auto;
+}
+
+@media screen and (orientation: portrait) {
+    #orientation-warning.active {
+        display: flex;
+    }
+}
+
+#joystick-zone {
+    position: absolute;
+    bottom: 40px;
+    left: 40px;
+    width: 150px;
+    height: 150px;
+    z-index: 50;
 }
