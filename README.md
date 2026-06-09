@@ -1,36 +1,37 @@
-# Neon Galaxy Defender 🚀
+# Neon Galaxy Defender v2 🚀
 
-A highly engaging, browser-based space shooter built with pure HTML, CSS, and JavaScript. 
+A highly engaging, browser-based space shooter rebuilt with a modern tech stack.
 
-![Neon Galaxy Defender](https://img.shields.io/badge/Status-Active-brightgreen?style=for-the-badge)
-![HTML5](https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/css3-%231572B6.svg?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E)
+## Tech Stack
+- **Vite** - Blazing fast build tool
+- **TypeScript** - Full type safety across the codebase
+- **Canvas API** - Smooth 60fps 2D rendering
+- **Web Audio API** - Synthesized sound effects
 
-## 🎮 Gameplay Mechanics
-- **Dynamic Sizing**: Your ship grows as you destroy geometric threats! But be careful—colliding with an enemy will cause your ship to shrink. If it gets too small, it's game over!
-- **Level Progression**: Survive for 30 seconds to advance to the next level. Each level increases the speed and spawn rate of enemies.
-- **Elite Badge**: Reach Level 5 to unlock the prestigious Elite Defender Badge! 🏅
+## New Features
+- **5 Enemy Types**: Chaser, Zigzag, Tank, Shooter, Bomber - each with unique behaviors
+- **Boss Fights**: Every 5th level features a boss with attack patterns and phases
+- **6 Power-Ups**: Shield, Rapid Fire, Spread Shot, Speed Boost, Health, Magnet
+- **Parallax Starfield**: Immersive space background with parallax scrolling
+- **Screen Shake**: Weighted hit feedback
+- **Health & Shield System**: Visual bars with HP/SHD indicators
+- **Pause & Sound Toggle**: Press ESC/P to pause, click sound icon to toggle
+- **High Score Persistence**: Best score saved to localStorage
+- **Badge System**: Earn badges at milestone levels (Bronze, Silver, Gold, Diamond, Legendary)
+- **Dual Controls**: Keyboard + Mouse (desktop) / Joystick controls (mobile)
 
-## ✨ Features
-- Stunning neon cyber-aesthetic with glassmorphism UI.
-- Smooth particle explosions and dynamic animations.
-- Custom collision detection and enemy tracking algorithms.
-- Fully responsive HTML Canvas setup.
-
-## 🕹️ Controls
+## Controls
 - **Move**: `W`, `A`, `S`, `D` or `Arrow Keys`
 - **Aim & Shoot**: `Mouse` + `Left Click`
+- **Pause**: `ESC` or `P`
 
-## 🚀 How to Run
-1. Simply open the `index.html` file in your preferred modern web browser.
-2. Alternatively, you can start a local development server in the directory:
-   ```bash
-   python -m http.server 8000
-   # or
-   npx http-server
-   ```
-   Then visit `http://localhost:8000`.
+## Getting Started
+```bash
+npm install
+npm run dev
+```
 
----
-*Created as a fun exercise in Canvas rendering, particle systems, and modern UI design.*
+Build for production:
+```bash
+npm run build
+```

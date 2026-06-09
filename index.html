@@ -6,7 +6,6 @@
     <title>Neon Galaxy Defender</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
 </head>
 <body>
     <div id="orientation-warning">
@@ -32,7 +31,7 @@
             <div class="stat">SCORE: <span id="scoreEl">0</span></div>
             <div class="stat">LEVEL: <span id="levelEl">1</span></div>
             <div class="stat">TIME: <span id="timeEl">30</span>s</div>
-            <div id="badge-container" class="hidden">🏅 ELITE DEFENDER</div>
+            <div id="badge-container" class="hidden"></div>
         </div>
         
         <div id="start-screen" class="glass-panel hidden" style="display: none;">
@@ -45,11 +44,13 @@
                     <li>Destroy enemies to grow your ship and increase your score.</li>
                     <li>Contact with enemies will shrink your ship. If you shrink too much, system failure!</li>
                     <li>Warning: Threats will increase in speed and spawn rate over time.</li>
+                    <li>Collect power-ups to gain temporary advantages!</li>
                 </ul>
             </div>
             <div class="controls-info">
                 <p>Move: <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or <kbd>Arrow Keys</kbd></p>
                 <p>Aim & Shoot: <kbd>Mouse</kbd> + <kbd>Left Click</kbd></p>
+                <p>Pause: <kbd>ESC</kbd> or <kbd>P</kbd></p>
             </div>
             <button id="start-btn" class="neon-btn">INITIALIZE</button>
         </div>
@@ -58,13 +59,14 @@
             <h1 class="neon-text error">SYSTEM FAILURE</h1>
             <p>FINAL SCORE: <span id="finalScoreEl">0</span></p>
             <p>LEVEL REACHED: <span id="finalLevelEl">1</span></p>
-            <div id="finalBadgeContainer" class="hidden" style="margin-bottom: 20px; font-size: 24px; color: gold; text-shadow: 0 0 10px gold;">🏅 ELITE DEFENDER BADGE EARNED!</div>
+            <div id="finalBadgeContainer" class="hidden" style="margin-bottom: 20px; font-size: 24px; color: gold; text-shadow: 0 0 10px gold;"></div>
             <button id="restart-btn" class="neon-btn">REBOOT SYSTEM</button>
         </div>
     </div>
 
     <canvas id="gameCanvas"></canvas>
 
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/nipplejs/0.9.0/nipplejs.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
 </body>
 </html>

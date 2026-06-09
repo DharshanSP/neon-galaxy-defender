@@ -34,10 +34,9 @@ canvas {
     width: 100%;
     height: 100%;
     z-index: 1;
-    /* Added a subtle grid background to make movement feel more grounded */
     background-image: 
-        linear-gradient(rgba(0, 243, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 243, 255, 0.05) 1px, transparent 1px);
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
     background-size: 150px 150px;
     background-position: center center;
 }
@@ -58,16 +57,17 @@ canvas {
 
 #top-bar {
     position: absolute;
-    top: 20px;
-    left: 30px;
-    right: 30px;
+    top: 15px;
+    left: 20px;
+    right: 20px;
     display: flex;
     justify-content: space-between;
     font-family: 'Orbitron', sans-serif;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: 700;
     pointer-events: none;
     z-index: 20;
+    align-items: center;
 }
 
 .stat {
@@ -78,6 +78,7 @@ canvas {
 
 #badge-container {
     color: gold;
+    font-size: 18px;
     text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
     animation: pulsate-gold 2s infinite alternate;
 }
@@ -89,6 +90,11 @@ canvas {
 @keyframes pulsate-gold {
     0% { transform: scale(1); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
     100% { transform: scale(1.1); text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
 }
 
 .glass-panel {
@@ -300,10 +306,13 @@ kbd {
     right: 40px;
 }
 
-/* Mobile Responsiveness (Vast Edition) */
+#powerup-display {
+    font-family: 'Orbitron', sans-serif;
+}
+
 @media screen and (max-width: 900px), screen and (max-height: 500px) {
     canvas {
-        background-size: 250px 250px; /* Much larger grid for 'vast' feel */
+        background-size: 250px 250px;
     }
 
     .glass-panel {
@@ -357,7 +366,7 @@ kbd {
         bottom: 15px;
         width: 80px;
         height: 80px;
-        opacity: 0.5; /* More transparent to see through */
+        opacity: 0.5;
     }
     #joystick-move {
         left: 15px;
