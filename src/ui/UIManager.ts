@@ -123,6 +123,10 @@ export class UIManager {
       <div class="glass-panel" style="pointer-events:auto;text-align:center;">
         <h1 class="neon-text" style="font-size:36px;margin-bottom:20px;">PAUSED</h1>
         <p style="margin-bottom:20px;">Press <kbd>ESC</kbd> or <kbd>P</kbd> to resume</p>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button id="pause-resume-btn" class="glass-panel" style="cursor:pointer;padding:10px 24px;border:1px solid #00f3ff;color:#00f3ff;background:rgba(0,243,255,0.1);border-radius:8px;font-family:Orbitron,sans-serif;font-size:16px;">▶ RESUME</button>
+          <button id="pause-exit-btn" class="glass-panel" style="cursor:pointer;padding:10px 24px;border:1px solid #ff0044;color:#ff0044;background:rgba(255,0,68,0.1);border-radius:8px;font-family:Orbitron,sans-serif;font-size:16px;">✕ EXIT</button>
+        </div>
       </div>
     `;
     document.body.appendChild(this.pauseOverlay);

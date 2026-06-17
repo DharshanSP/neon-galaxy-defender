@@ -162,6 +162,32 @@ export class Game {
         if (this.gameActive) this.togglePause();
       });
     }
+
+    const pauseResumeBtn = document.getElementById('pause-resume-btn');
+    pauseResumeBtn?.addEventListener('click', () => {
+      if (this.gameActive) this.togglePause();
+    });
+
+    const pauseExitBtn = document.getElementById('pause-exit-btn');
+    pauseExitBtn?.addEventListener('click', () => {
+      this.exitToMenu();
+    });
+  }
+
+  private exitToMenu(): void {
+    this.gameActive = false;
+    this.paused = false;
+    this.ui.showPauseOverlay(false);
+
+    this.ui.hideGameOver();
+    this.ui.showCanvasOverlay(false);
+    this.ui.showStartScreen();
+
+    if (this.input.destroyJoysticks) {
+      this.input.destroyJoysticks();
+    }
+
+    this.audio.ensureResumed();
   }
 
   private ensureResumed(): void {
