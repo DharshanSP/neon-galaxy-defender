@@ -156,7 +156,7 @@ export class Player {
 
   applyPowerUp(type: PowerUpType, duration: number): void {
     if (duration > 0) {
-      this.activePowerUps[type] = this.frameCount + duration;
+      this.activePowerUps[type] = performance.now() + duration;
     }
     switch (type) {
       case 'shield':
@@ -180,7 +180,7 @@ export class Player {
 
   updatePowerUps(): void {
     for (const [type, endFrame] of Object.entries(this.activePowerUps)) {
-      if (endFrame && this.frameCount > endFrame) {
+      if (endFrame && performance.now() > endFrame) {
         delete this.activePowerUps[type as PowerUpType];
         switch (type as PowerUpType) {
           case 'rapidfire':

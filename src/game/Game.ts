@@ -374,8 +374,24 @@ export class Game {
   }
 
   private updatePowerUps(): void {
+    const magnetActive =
+      this.player.activePowerUps.magnet &&
+      performance.now() < this.player.activePowerUps.magnet;
+
     for (let i = this.powerUps.length - 1; i >= 0; i--) {
       const pu = this.powerUps[i];
+
+      if (magnetActive) {
+        const dx = this.player.x - pu.x;
+        const dy = this.player.y - pu.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist > 0 && dist < 300) {
+          const force = 6 * (1 - dist / 300);
+          pu.x += (dx / dist) * force;
+          pu.y += (dy / dist) * force;
+        }
+      }
+
       pu.update();
       if (pu.isExpired()) {
         this.powerUps.splice(i, 1);
