@@ -1,0 +1,377 @@
+:root {
+    --bg-color: #050505;
+    --primary-color: #00f3ff;
+    --secondary-color: #ff00ea;
+    --danger-color: #ff0055;
+    --text-color: #ffffff;
+    --glass-bg: rgba(10, 15, 30, 0.6);
+    --glass-border: rgba(0, 243, 255, 0.2);
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Rajdhani', sans-serif;
+    overflow: hidden;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background-image: 
+        linear-gradient(rgba(0, 243, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 243, 255, 0.03) 1px, transparent 1px);
+    background-size: 150px 150px;
+    background-position: center center;
+}
+
+#ui-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 10;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+#top-bar {
+    position: absolute;
+    top: 15px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    pointer-events: none;
+    z-index: 20;
+    align-items: center;
+}
+
+.stat {
+    color: var(--primary-color);
+    text-shadow: 0 0 10px rgba(0, 243, 255, 0.5);
+    letter-spacing: 2px;
+}
+
+#badge-container {
+    color: gold;
+    font-size: 18px;
+    text-shadow: 0 0 15px rgba(255, 215, 0, 0.8), 0 0 30px rgba(255, 215, 0, 0.6);
+    animation: pulsate-gold 2s infinite alternate;
+}
+
+#badge-container.hidden {
+    display: none;
+}
+
+@keyframes pulsate-gold {
+    0% { transform: scale(1); text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+    100% { transform: scale(1.1); text-shadow: 0 0 20px rgba(255, 215, 0, 0.8), 0 0 40px rgba(255, 215, 0, 0.5); }
+}
+
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
+
+.glass-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid var(--glass-border);
+    border-radius: 15px;
+    padding: 40px 60px;
+    text-align: center;
+    box-shadow: 0 0 30px rgba(0, 243, 255, 0.1), inset 0 0 20px rgba(0, 243, 255, 0.05);
+    pointer-events: auto;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.glass-panel.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: scale(0.95);
+    display: none;
+}
+
+.neon-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 48px;
+    font-weight: 900;
+    color: var(--primary-color);
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    margin-bottom: 10px;
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--primary-color),
+        0 0 40px var(--primary-color),
+        0 0 80px var(--primary-color);
+    animation: pulsate 2.5s infinite alternate;
+}
+
+.neon-text.error {
+    color: var(--danger-color);
+    text-shadow: 
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px var(--danger-color),
+        0 0 40px var(--danger-color),
+        0 0 80px var(--danger-color);
+    animation: pulsate-error 1.5s infinite alternate;
+}
+
+p {
+    font-size: 20px;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.8);
+    letter-spacing: 1px;
+}
+
+.rules-box {
+    margin-bottom: 20px;
+    text-align: left;
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 3px solid var(--danger-color);
+}
+
+.rules-box h3 {
+    color: var(--danger-color);
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    margin-bottom: 10px;
+    letter-spacing: 2px;
+}
+
+.rules-box ul {
+    list-style-type: none;
+}
+
+.rules-box li {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    position: relative;
+    padding-left: 20px;
+    line-height: 1.4;
+}
+
+.rules-box li::before {
+    content: '►';
+    position: absolute;
+    left: 0;
+    color: var(--danger-color);
+    font-size: 12px;
+    top: 3px;
+}
+
+.controls-info {
+    margin-bottom: 40px;
+    text-align: left;
+    background: rgba(0,0,0,0.3);
+    padding: 20px;
+    border-radius: 8px;
+    border-left: 3px solid var(--secondary-color);
+}
+
+.controls-info p {
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.controls-info p:last-child {
+    margin-bottom: 0;
+}
+
+kbd {
+    background-color: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px;
+    padding: 2px 8px;
+    font-family: monospace;
+    font-size: 14px;
+    color: var(--secondary-color);
+    box-shadow: 0 2px 0 rgba(0,0,0,0.5);
+}
+
+.neon-btn {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--bg-color);
+    background-color: var(--primary-color);
+    border: none;
+    border-radius: 30px;
+    padding: 15px 40px;
+    cursor: pointer;
+    box-shadow: 0 0 15px var(--primary-color);
+    transition: all 0.2s ease;
+    text-transform: uppercase;
+}
+
+.neon-btn:hover {
+    box-shadow: 0 0 25px var(--primary-color), 0 0 50px var(--primary-color);
+    transform: scale(1.05);
+}
+
+.neon-btn:active {
+    transform: scale(0.95);
+}
+
+#game-over-screen .neon-btn {
+    background-color: var(--danger-color);
+    color: white;
+    box-shadow: 0 0 15px var(--danger-color);
+}
+
+#game-over-screen .neon-btn:hover {
+    box-shadow: 0 0 25px var(--danger-color), 0 0 50px var(--danger-color);
+}
+
+@keyframes pulsate {
+    0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary-color), 0 0 40px var(--primary-color); }
+    100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--primary-color), 0 0 40px var(--primary-color), 0 0 60px var(--primary-color); }
+}
+
+@keyframes pulsate-error {
+    0% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--danger-color), 0 0 40px var(--danger-color); }
+    100% { text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px var(--danger-color), 0 0 40px var(--danger-color), 0 0 60px var(--danger-color); }
+}
+
+#orientation-warning {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(5, 5, 5, 0.95);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 24px;
+    text-align: center;
+    color: var(--danger-color);
+    font-family: 'Orbitron', sans-serif;
+    display: none;
+}
+
+#orientation-warning .glass-panel {
+    pointer-events: auto;
+}
+
+@media screen and (orientation: portrait) {
+    #orientation-warning.active {
+        display: flex;
+    }
+}
+
+.joystick {
+    position: absolute;
+    bottom: 40px;
+    width: 150px;
+    height: 150px;
+    z-index: 50;
+}
+
+#joystick-move {
+    left: 40px;
+}
+
+#joystick-shoot {
+    right: 40px;
+}
+
+#powerup-display {
+    font-family: 'Orbitron', sans-serif;
+}
+
+@media screen and (max-width: 900px), screen and (max-height: 500px) {
+    canvas {
+        background-size: 250px 250px;
+    }
+
+    .glass-panel {
+        padding: 12px 20px;
+        width: 85%;
+        max-width: 450px;
+        max-height: 98vh;
+        overflow-y: auto;
+    }
+    
+    .neon-text {
+        font-size: 22px;
+        margin-bottom: 3px;
+    }
+    
+    p {
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    
+    .rules-box, .controls-info {
+        padding: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .rules-box h3 {
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .rules-box li, .controls-info p {
+        font-size: 12px;
+        margin-bottom: 3px;
+    }
+    
+    .neon-btn {
+        padding: 8px 16px;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+    
+    #top-bar {
+        top: 8px;
+        left: 12px;
+        right: 12px;
+        font-size: 12px;
+        letter-spacing: 1px;
+    }
+
+    .joystick {
+        bottom: 15px;
+        width: 80px;
+        height: 80px;
+        opacity: 0.5;
+    }
+    #joystick-move {
+        left: 15px;
+    }
+    #joystick-shoot {
+        right: 15px;
+    }
+}
